@@ -1,7 +1,8 @@
-package com.nourtayeb.remy
+package com.nourtayeb.remy.presentation.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.nourtayeb.remy.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
