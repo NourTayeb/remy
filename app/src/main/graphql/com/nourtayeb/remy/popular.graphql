@@ -1,0 +1,21 @@
+# Write your query or mutation here
+query Popular {
+  movies {
+    popular {
+      totalCount
+      pageInfo{
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
+      edges{
+        cursor
+        node{
+          id
+          title
+        }
+      }
+    }
+  }
+}
