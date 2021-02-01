@@ -25,6 +25,7 @@ class MovieListFragment:Fragment() {
     val uiActionsChannel = Channel<MovieListUiAction>()
     lateinit var navController: NavController
     lateinit var adapter: MovieListAdapter
+    var cursor :String? = null
 
     private lateinit var binding: FragmentMovieListBinding
     override fun onCreateView(
@@ -80,6 +81,10 @@ class MovieListFragment:Fragment() {
             when (it) {
                 is MovieListUiState.MoviesLoaded -> {
                     adapter.addData(it.data.popular.edges)
+                    cursor = it.data.popular.edges?.get(it.data.popular.edges.size-1)?.cursor
+                    if (!it.data?.popular.pageInfo.hasNextPage) {
+                        adapter.onEndOfListReached = null
+                    }
                     hideLoading()
                 }
                 is MovieListUiState.Failed -> {
@@ -119,7 +124,7 @@ class MovieListFragment:Fragment() {
 
     fun loadMovies() {
         lifecycle.coroutineScope.launchWhenResumed {
-            uiActionsChannel.send(MovieListUiAction.LoadMovies)
+            uiActionsChannel.send(MovieListUiAction.LoadMovies(cursor))
         }
     }
 }

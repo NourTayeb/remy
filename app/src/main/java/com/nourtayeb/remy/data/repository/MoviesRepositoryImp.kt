@@ -9,8 +9,8 @@ import javax.inject.Inject
 
 class MoviesRepositoryImp @Inject constructor(val apolloClient: ApolloClient):MoviesRepository{
 
-    override suspend fun getMovies(): PopularQuery.Movies? {
-        val responseDeffered = apolloClient.query(PopularQuery())
+    override suspend fun getMovies(cursor:String?): PopularQuery.Movies? {
+        val responseDeffered = apolloClient.query(PopularQuery(cursor = Input.fromNullable(cursor)))
         val response = responseDeffered.await()
         return response.data?.movies
     }

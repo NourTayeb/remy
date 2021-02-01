@@ -4,7 +4,7 @@ import com.nourtayeb.remy.PopularQuery
 
 
 sealed class MovieListUiAction {
-    object LoadMovies : MovieListUiAction()
+    data class LoadMovies (val cursor:String?): MovieListUiAction()
 
 }
 sealed class MovieListUiState {
