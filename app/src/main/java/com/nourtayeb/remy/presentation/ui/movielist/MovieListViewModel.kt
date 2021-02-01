@@ -17,7 +17,7 @@ class MovieListViewModel @ViewModelInject constructor(
         val flow = flow2.distinctUntilChangedBy { it }.flatMapMerge {
             when (it) {
                 is MovieListUiAction.LoadMovies -> flow {
-                    val MoviesResult = getPopularMoviesUseCase.buildUseCase()
+                    val MoviesResult = getPopularMoviesUseCase.buildUseCase(it.cursor)
                     if (MoviesResult == null) {
                         emit(MovieListUiState.Failed())
                     } else {

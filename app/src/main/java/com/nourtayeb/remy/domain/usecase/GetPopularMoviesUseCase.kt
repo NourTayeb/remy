@@ -7,8 +7,8 @@ import javax.inject.Inject
 class GetPopularMoviesUseCase @Inject constructor(
     private val moviesRepository: MoviesRepository
 ) {
-    suspend fun buildUseCase(): PopularQuery.Movies? {
-        return moviesRepository.getMovies()
+    suspend fun buildUseCase(cursor:String?): PopularQuery.Movies? {
+        return moviesRepository.getMovies(cursor)
     }
 
 }

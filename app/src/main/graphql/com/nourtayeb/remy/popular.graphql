@@ -1,7 +1,6 @@
-# Write your query or mutation here
-query Popular {
+query Popular ($cursor: String){
   movies {
-    popular {
+    popular(after: $cursor) {
       totalCount
       pageInfo{
         endCursor
