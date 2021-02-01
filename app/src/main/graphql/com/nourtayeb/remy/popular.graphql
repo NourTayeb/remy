@@ -15,6 +15,7 @@ query Popular {
           id
           title
           rating
+          poster(size:W342)
         }
       }
     }

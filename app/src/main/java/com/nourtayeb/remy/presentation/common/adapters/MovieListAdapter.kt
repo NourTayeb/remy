@@ -3,6 +3,7 @@ package com.nourtayeb.remy.presentation.common.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.nourtayeb.movies_mvi.common.utility.loadImageFromUrl
 import com.nourtayeb.remy.PopularQuery
 import com.nourtayeb.remy.databinding.ListItemMovieBinding
 
@@ -35,6 +36,7 @@ class MovieListAdapter() :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val movie = list.get(position)?.node
+        holder.binding.image?.loadImageFromUrl(movie!!.poster as String?)
         holder.binding.title.text = movie?.title
         holder.binding.rating.text = "(${movie?.rating}/10)"
 
