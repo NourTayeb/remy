@@ -5,7 +5,7 @@ import com.nourtayeb.remy.domain.entity.MovieList
 
 
 sealed class MovieListUiAction {
-    data class LoadMovies (val cursor:String?): MovieListUiAction()
+    data class LoadMovies (val cursor:String?= null): MovieListUiAction()
 
 }
 sealed class MovieListUiState {

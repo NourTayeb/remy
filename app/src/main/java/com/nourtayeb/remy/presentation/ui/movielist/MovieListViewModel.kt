@@ -18,7 +18,7 @@ class MovieListViewModel @ViewModelInject constructor(
             when (it) {
                 is MovieListUiAction.LoadMovies -> flow {
                     val MoviesResult = getPopularMoviesUseCase.buildUseCase(it.cursor)
-                    if (MoviesResult == null) {
+                    if (MoviesResult == null || MoviesResult.movies.isEmpty()) {
                         emit(MovieListUiState.Failed())
                     } else {
                         emit(MovieListUiState.MoviesLoaded(MoviesResult))
