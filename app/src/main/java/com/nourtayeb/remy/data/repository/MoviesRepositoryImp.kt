@@ -4,14 +4,16 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Input
 import com.apollographql.apollo.coroutines.await
 import com.nourtayeb.remy.PopularQuery
+import com.nourtayeb.remy.data.mapper.MovieMapper
+import com.nourtayeb.remy.domain.entity.MovieList
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
-class MoviesRepositoryImp @Inject constructor(val apolloClient: ApolloClient):MoviesRepository{
+class MoviesRepositoryImp @Inject constructor(val apolloClient: ApolloClient,val movieMapper: MovieMapper):MoviesRepository{
 
-    override suspend fun getMovies(cursor:String?): PopularQuery.Movies? {
+    override suspend fun getMovies(cursor:String?): MovieList? {
         val responseDeffered = apolloClient.query(PopularQuery(cursor = Input.fromNullable(cursor)))
         val response = responseDeffered.await()
-        return response.data?.movies
+        return movieMapper.remoteToEntity(response.data?.movies)
     }
 }

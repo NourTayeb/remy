@@ -2,6 +2,7 @@ package com.nourtayeb.remy.common.di
 
 import android.content.SharedPreferences
 import com.apollographql.apollo.ApolloClient
+import com.nourtayeb.remy.data.mapper.MovieMapper
 import com.nourtayeb.remy.data.repository.MoviesRepository
 import com.nourtayeb.remy.data.repository.MoviesRepositoryImp
 import dagger.Module
@@ -13,8 +14,8 @@ import dagger.hilt.android.components.ApplicationComponent
 @InstallIn(ApplicationComponent::class)
 object DataRepositoryModule {
     @Provides
-    fun provideMoviesRepo(apolloClient: ApolloClient):MoviesRepository {
-        return MoviesRepositoryImp(apolloClient)
+    fun provideMoviesRepo(apolloClient: ApolloClient,movieMapper: MovieMapper):MoviesRepository {
+        return MoviesRepositoryImp(apolloClient,movieMapper)
     }
 
 
