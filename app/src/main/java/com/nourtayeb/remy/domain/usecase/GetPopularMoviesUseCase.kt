@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetPopularMoviesUseCase @Inject constructor(
     private val moviesRepository: MoviesRepository
 ) {
-    suspend fun buildUseCase(cursor:String?): MovieList? {
+    suspend fun buildUseCase(cursor:String?=null): MovieList? {
         return moviesRepository.getMovies(cursor)
     }
 
