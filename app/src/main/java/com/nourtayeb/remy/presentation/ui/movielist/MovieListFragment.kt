@@ -20,23 +20,24 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.consumeAsFlow
 
 @AndroidEntryPoint
-class MovieListFragment:Fragment() {
+class MovieListFragment : Fragment() {
     val viewModel: MovieListViewModel by viewModels()
 
     val uiActionsChannel = Channel<MovieListUiAction>()
     lateinit var navController: NavController
     lateinit var adapter: MovieListAdapter
-    var cursor :String? = null
+    var cursor: String? = null
 
-    private lateinit var binding: FragmentMovieListBinding
+    lateinit var binding: FragmentMovieListBinding
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMovieListBinding.inflate(inflater)
         return binding.root
     }
+
     override fun onDestroy() {
         uiActionsChannel.close()
         super.onDestroy()
@@ -50,18 +51,20 @@ class MovieListFragment:Fragment() {
         viewModel.state.observe(this, getStateObserver())
 
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         setUpRecyclerViewAdapters()
         loadMovies()
     }
+
     fun setUpRecyclerViewAdapters() {
         with(binding.recyclerView) {
             adapter = this@MovieListFragment.adapter
             layoutManager = androidx.recyclerview.widget.StaggeredGridLayoutManager(
-                    1,
-                    androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
+                1,
+                androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
             )
         }
 
@@ -71,7 +74,7 @@ class MovieListFragment:Fragment() {
             }
             adapter.onItemClicked = { movie ->
                 navController.navigate(
-                        MovieListFragmentDirections.openMovieDetails(movieId = movie!!.id)
+                    MovieListFragmentDirections.openMovieDetails(movieId = movie.id)
                 )
             }
         }
@@ -81,9 +84,9 @@ class MovieListFragment:Fragment() {
         return Observer {
             when (it) {
                 is MovieListUiState.MoviesLoaded -> {
-                    adapter.addData(it.data.popular.edges)
-                    cursor = it.data.popular.edges?.get(it.data.popular.edges.size-1)?.cursor
-                    if (!it.data?.popular.pageInfo.hasNextPage) {
+                    adapter.addData(it.data.movies)
+                    cursor = it.data.movies.get(it.data.movies.size - 1).cursor
+                    if (!it.data.hasNext) {
                         adapter.onEndOfListReached = null
                     }
                     hideLoading()
@@ -105,22 +108,24 @@ class MovieListFragment:Fragment() {
     }
 
     fun showToast(string: String) {
-        Toast.makeText(requireContext(),string,Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), string, Toast.LENGTH_LONG).show()
     }
 
-    fun hideNoData(){
+    fun hideNoData() {
         binding.noData.visibility = View.GONE
     }
-    fun showLoading(){
+
+    fun showLoading() {
         binding.loading.visibility = View.VISIBLE
     }
-    fun showNoData(){
+
+    fun showNoData() {
         binding.noData.visibility = View.VISIBLE
     }
-    fun hideLoading(){
+
+    fun hideLoading() {
         binding.loading.visibility = View.GONE
     }
-
 
 
     fun loadMovies() {
