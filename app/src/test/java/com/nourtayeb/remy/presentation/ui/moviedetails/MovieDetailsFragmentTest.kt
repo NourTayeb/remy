@@ -1,4 +1,4 @@
-package com.nourtayeb.remy.presentation.ui.movielist
+package com.nourtayeb.remy.presentation.ui.moviedetails
 
 import android.content.Context
 import android.os.Build
@@ -10,8 +10,12 @@ import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.coroutineScope
 import androidx.test.core.app.ApplicationProvider
+import com.nourtayeb.remy.R
+import com.nourtayeb.remy.databinding.ActivityMainBinding
+import com.nourtayeb.remy.databinding.FragmentMovieDetailsBinding
 import com.nourtayeb.remy.presentation.common.adapters.MovieListAdapter
 import com.nourtayeb.remy.presentation.common.base.FragmentBaseTest
+import com.nourtayeb.remy.presentation.common.dummyMovie
 import com.nourtayeb.remy.presentation.common.movieList
 import com.nourtayeb.remy.presentation.common.movies
 import io.mockk.every
@@ -38,103 +42,106 @@ import org.w3c.dom.Text
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.P])
 
-class MovieListFragmentTest : FragmentBaseTest() {
-    lateinit var fragment: MovieListFragment
+class MovieDetailsFragmentTest : FragmentBaseTest() {
+    lateinit var fragment: MovieDetailsFragment
 
 
     @RelaxedMockK
-    lateinit var viewModel: MovieListViewModel
+    lateinit var viewModel: MovieDetailsViewModel
 
-    @RelaxedMockK
-    lateinit var adapter: MovieListAdapter
     lateinit var context: Context
+
 
     @Before
     fun init() {
-        fragment = spyk(MovieListFragment())
+        fragment = spyk(MovieDetailsFragment())
         every { fragment.viewModel } returns viewModel
-        every { fragment.adapter } returns adapter
         every { fragment.hideLoading() } returns Unit
         every { fragment.showLoading() } returns Unit
-        every { fragment.showNoData() } returns Unit
-        every { fragment.hideNoData() } returns Unit
+        every { fragment.showToast(any()) } returns Unit
+        every { fragment.showMovieData(any()) } returns Unit
         context = ApplicationProvider.getApplicationContext<Context>()
+        every { fragment.requireContext() } returns context
     }
 
     @Test
-    fun `MoviesLoadedUiState calls hideLoading and adapter addData`() {
+    fun `MovieLoadedUiState calls hideLoading and showMovieData`() {
+        val movieLoadedState = MovieDetailsUiState.MovieLoaded(
+            dummyMovie.id,
+            dummyMovie.title,
+            dummyMovie.rating,
+            dummyMovie.poster,
+            dummyMovie.releaseDate,
+            dummyMovie.details
+        )
         every { viewModel.state } returns MutableLiveData(
-            MovieListUiState.MoviesLoaded(movieList)
+            movieLoadedState
         )
         val flow = flow {
-            emit(MovieListUiAction.LoadMovies())
+            emit(MovieDetailsUiAction.LoadMovieDetails(dummyMovie.id))
         }
         viewModel.reduce(flow)
         viewModel.state.observe(lifecycleOwner, fragment.getStateObserver())
         verify { fragment.hideLoading() }
-        verify { adapter.addData(movieList.movies) }
-    }
-    @Test
-    fun `MoviesLoadedUiState never calls showNoData`() {
-        every { viewModel.state } returns MutableLiveData(
-            MovieListUiState.MoviesLoaded(movieList)
-        )
-        val flow = flow {
-            emit(MovieListUiAction.LoadMovies())
-        }
-        viewModel.reduce(flow)
-        viewModel.state.observe(lifecycleOwner, fragment.getStateObserver())
-        verify(exactly = 0) { fragment.showNoData() }
+        verify { fragment.showMovieData(movieLoadedState) }
     }
 
     @Test
-    fun `FailedUiState calls hideLoading and showNoData`() {
+    fun `MovieLoadedUiState never calls showToast error couldnt load movie`() {
+        val movieLoadedState = MovieDetailsUiState.MovieLoaded(
+            dummyMovie.id,
+            dummyMovie.title,
+            dummyMovie.rating,
+            dummyMovie.poster,
+            dummyMovie.releaseDate,
+            dummyMovie.details
+        )
         every { viewModel.state } returns MutableLiveData(
-            MovieListUiState.Failed()
+            movieLoadedState
         )
         val flow = flow {
-            emit(MovieListUiAction.LoadMovies())
+            emit(MovieDetailsUiAction.LoadMovieDetails(dummyMovie.id))
+        }
+        viewModel.reduce(flow)
+        viewModel.state.observe(lifecycleOwner, fragment.getStateObserver())
+        verify(exactly = 0) { fragment.showToast(context.getString(R.string.couldnt_load_movie)) }
+    }
+
+    @Test
+    fun `FailedUiState calls hideLoading and showToast error couldnt load movie`() {
+        every { viewModel.state } returns MutableLiveData(
+            MovieDetailsUiState.Failed()
+        )
+        val flow = flow {
+            emit(MovieDetailsUiAction.LoadMovieDetails(dummyMovie.id))
         }
         viewModel.reduce(flow)
         viewModel.state.observe(lifecycleOwner, fragment.getStateObserver())
         verify { fragment.hideLoading() }
-        verify { fragment.showNoData() }
+        verify { fragment.showToast(context.getString(R.string.couldnt_load_movie)) }
     }
 
-    @Test
-    fun `FailedUiState never calls hideNoData`() {
-        every { viewModel.state } returns MutableLiveData(
-            MovieListUiState.Failed()
-        )
-        val flow = flow {
-            emit(MovieListUiAction.LoadMovies())
-        }
-        viewModel.reduce(flow)
-        viewModel.state.observe(lifecycleOwner, fragment.getStateObserver())
-        verify(exactly = 0) { fragment.hideNoData() }
-    }
 
     @Test
-    fun `LoadingUiState calls showLoading and hideNoData`() {
+    fun `LoadingUiState calls showLoading`() {
         every { viewModel.state } returns MutableLiveData(
-            MovieListUiState.Loading
+            MovieDetailsUiState.Loading
         )
         val flow = flow {
-            emit(MovieListUiAction.LoadMovies())
+            emit(MovieDetailsUiAction.LoadMovieDetails(dummyMovie.id))
         }
         viewModel.reduce(flow)
         viewModel.state.observe(lifecycleOwner, fragment.getStateObserver())
         verify { fragment.showLoading() }
-        verify { fragment.hideNoData() }
     }
 
     @Test
     fun `LoadingUiState never calls hideLoading`() {
         every { viewModel.state } returns MutableLiveData(
-            MovieListUiState.Loading
+            MovieDetailsUiState.Loading
         )
         val flow = flow {
-            emit(MovieListUiAction.LoadMovies())
+            emit(MovieDetailsUiAction.LoadMovieDetails(dummyMovie.id))
         }
         viewModel.reduce(flow)
         viewModel.state.observe(lifecycleOwner, fragment.getStateObserver())

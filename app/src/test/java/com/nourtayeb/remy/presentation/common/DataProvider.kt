@@ -13,3 +13,5 @@ val movieList = MovieList(movies,true)
 
 val emptyMovies = listOf<Movie>()
 val emptyMovieList = MovieList(emptyMovies,false)
+
+val dummyMovie = Movie("11",1,"movie1",1.1,"url1","01-01-2021","details1")

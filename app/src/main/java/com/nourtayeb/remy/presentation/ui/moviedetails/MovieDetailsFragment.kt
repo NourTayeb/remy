@@ -53,7 +53,6 @@ class MovieDetailsFragment:Fragment() {
         viewModel.reduce(flow)
         viewModel.state.observe(this, getStateObserver())
         loadMovieDetails()
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
