@@ -49,14 +49,14 @@ class MovieListFragment : Fragment() {
         val flow: Flow<MovieListUiAction> = uiActionsChannel.consumeAsFlow()
         viewModel.reduce(flow)
         viewModel.state.observe(this, getStateObserver())
-
+        loadMovies()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         setUpRecyclerViewAdapters()
-        loadMovies()
+
     }
 
     fun setUpRecyclerViewAdapters() {

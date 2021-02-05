@@ -1,4 +1,4 @@
-query Popular($id:Int) {
+query Details($id:Int!) {
   movies {
     movie(id:$id) {
       id
