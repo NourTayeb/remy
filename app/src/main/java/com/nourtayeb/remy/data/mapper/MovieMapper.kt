@@ -23,7 +23,8 @@ class MovieMapper @Inject constructor() {
             return null
         }
 
-    }fun remoteToEntity( remoteMovie: DetailsQuery.Movie?):Movie?{
+    }
+    fun remoteToEntity( remoteMovie: DetailsQuery.Movie?):Movie?{
         try {
 
                 return Movie(
