@@ -1,6 +1,7 @@
 package com.nourtayeb.remy.presentation.ui.movielist
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,7 +57,16 @@ class MovieListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         setUpRecyclerViewAdapters()
+        setupSwipeToRefresh()
 
+    }
+
+    fun setupSwipeToRefresh() {
+        binding.swipeToRefresh.setOnRefreshListener {
+            adapter.clearData()
+            cursor = null
+            loadMovies()
+        }
     }
 
     fun setUpRecyclerViewAdapters() {
@@ -116,7 +126,10 @@ class MovieListFragment : Fragment() {
     }
 
     fun showLoading() {
-        binding.loading.visibility = View.VISIBLE
+        if (cursor == null)
+            binding.swipeToRefresh.isRefreshing = true
+        else
+            binding.loading.visibility = View.VISIBLE
     }
 
     fun showNoData() {
@@ -125,6 +138,7 @@ class MovieListFragment : Fragment() {
 
     fun hideLoading() {
         binding.loading.visibility = View.GONE
+        binding.swipeToRefresh.isRefreshing = false
     }
 
 
