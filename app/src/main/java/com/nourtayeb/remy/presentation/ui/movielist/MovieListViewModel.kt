@@ -14,7 +14,9 @@ class MovieListViewModel @ViewModelInject constructor(
     lateinit var state: LiveData<MovieListUiState>
 
     fun reduce(flow2: Flow<MovieListUiAction>): Flow<MovieListUiState> {
-        val flow = flow2.distinctUntilChangedBy { it }.flatMapMerge {
+        val flow = flow2.filter {
+            !(it is MovieListUiAction.LoadMovies && it.cursor != null && state.value == MovieListUiState.Loading)
+        }.flatMapMerge {
             when (it) {
                 is MovieListUiAction.LoadMovies -> flow {
                     val MoviesResult = getPopularMoviesUseCase.buildUseCase(it.cursor)

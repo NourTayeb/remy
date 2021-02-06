@@ -24,6 +24,10 @@ class MovieListAdapter() :
         return list.size
     }
 
+    fun clearData(){
+        list.clear()
+        notifyDataSetChanged()
+    }
     fun addData(data: List<Movie>?) {
         data?.let {
             list.addAll(it)
